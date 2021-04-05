@@ -25,14 +25,22 @@ object PerformanceUtils {
 object CRUDFunctions {
   case class CRUD[+R, +U, +D](colName:String, read: () => R, update: () => U, delete: () => D)
 
-  case class Operation[+O]( description:String, op: () => O)
+  case class Operation[+O]( name:String, op: () => O)
 
-  def compare[O](operations:Operation[O]*) = {
+  def compareOn[O](description:String, operations:Operation[O]*) = {
     var results:scala.List[(String, MeasurementResults[O])] = scala.List();
+    println("Compare collections on " + description)
     for(c <- operations) {
-      results = (c.description, measure(c.description) {c.op()}) :: results
+      results = (c.name, measure{c.op()}) :: results
     }
-    println(results.sortBy(m => m._2.duration))
+    results = results.sortBy(r => r._2.duration)
+    printRanking(results)
+  }
+
+  private def printRanking[O](results:scala.List[(String, MeasurementResults[O])]): Unit ={
+    println("Ranking")
+    for (i <- 0 to results.size-1) println( (i+1) + ". " + results(i)._1 + " exec time: " + results(i)._2.duration)
+    println("--------------------")
   }
 }
 
@@ -40,15 +48,26 @@ object CollectionsTest extends App {
   import CRUDFunctions._
   import PerformanceUtils._
   var list = scala.List(10, 20, 30, 40, 50) //create op
-  val listCRUD = CRUD("List", () => list(3), () => list = list :+ 6, () => list = list.drop(1))
   val listBuffer = ListBuffer(10, 20, 30, 40, 50) //create op
-  val lBufCRUD = CRUD("ListBuffer", ()=> listBuffer(3), () => listBuffer+=6, () => listBuffer.remove(0))
   var vector = Vector(10, 20, 30, 40, 50)
-  val vecCRUD = CRUD("Vector",() => vector(3), ()=> vector = vector:+6,() => vector = vector.drop(1))
   var arr = Array(10, 20, 30, 40, 50)
-  val arrCRUD = CRUD("Array",() => arr(3), ()=> arr = arr:+6,() => arr = arr.drop(1))
+  val arrBuf = ArrayBuffer(10, 20, 30, 40, 50)
 
-  compare(Operation("List read", () => list(3)), Operation("ListBuffer read", () => listBuffer(3)))
+  compareOn("getting the 3rd element:", Operation("List", () => list(3)),
+    Operation("ListBuffer", () => listBuffer(3)), Operation("Array", () => arr(3)),
+    Operation("Vector", () => vector(3)), Operation("ArrayBuffer", () => arrBuf(3)))
+
+  compareOn("getting the size:", Operation("List", () => list.size),
+    Operation("ListBuffer", () => listBuffer.size), Operation("Array", () => arr.size),
+    Operation("Vector", () => vector.size), Operation("ArrayBuffer", () => arrBuf.size))
+
+  compareOn("getting the last element:", Operation("List", () => list.last),
+    Operation("ListBuffer", () => listBuffer.last), Operation("Array", () => arr.last),
+    Operation("Vector", () => vector.last), Operation("ArrayBuffer", () => arrBuf.last))
+
+  compareOn("updating by prepend a new element:", Operation("List", () => list = 0 :: list),
+    Operation("ListBuffer", () => 0 +=: listBuffer), Operation("Array", () => arr = 0+:arr),
+    Operation("Vector", () => vector = 0+: vector), Operation("ArrayBuffer", () => 0 +=: arrBuf))
 
 //  measure("list append elem"){listCRUD.update()}
 //  measure("listBuffer append elem"){lBufCRUD.update()}
