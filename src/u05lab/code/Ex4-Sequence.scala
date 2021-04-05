@@ -4,14 +4,20 @@ import u05lab.code.Function.sequence
 
 object Function{
 
-  def sequence[B](a: scala.List[Option[B]]): Option[scala.List[B]] = {
-    val op:(Option[B], Option[scala.List[B]]) => Option[scala.List[B]] = (e, b)=> e match {
-        case Some(value) if b.isDefined => Some(value :: b.get)
-        case _ => None
-      }
-    val acc:Option[scala.List[B]] = Some(scala.List.empty)
-    a.foldRight(acc)(op)
+  def sequence[B](a: scala.List[Option[B]]): Option[scala.List[B]] = a.contains(None) match {
+    case true => None
+    case _ => Some(a.collect({case h => h.get}))
   }
+  // {
+//    val op:(Option[B], Option[scala.List[B]]) => Option[scala.List[B]] = (e, b)=> e match {
+//        case Some(value) if b.isDefined => Some(value :: b.get)
+//        case _ => None
+//      }
+//    val acc:Option[scala.List[B]] = Some(scala.List.empty)
+//
+//    a.foldRight(acc)(op)
+//
+//  }
 }
 
 object SequenceTest extends App{
