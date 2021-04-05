@@ -144,13 +144,14 @@ trait ListImplementation[A] extends List[A] {
     * @throws UnsupportedOperationException if the list is empty
     */
   override def reduce(op: (A,A)=>A): A = this match {
-    case h::t if t == List.nil => h
     case h::t => t.foldLeft(h)(op)
     case _ => throw new UnsupportedOperationException()
   }
 
   override def takeRight(n: Int): List[A] = {
-    this.reverse.zipRight.span(t => t._2 < n)._1.map(t => t._1).reverse
+//    val len = this.foldLeft(0)((acc, _) => acc+1)
+//    this.zipRight.partition({ case (e, i) => i >= len-n})._1.map({case (e, i) => e})
+    this.reverse.zipRight.span({ case (_, i) => i < n})._1.map({case (e,_) => e}).reverse
   }
 
   override def collect[B](partialFunction: PartialFunction[A, B]): List[B] ={
