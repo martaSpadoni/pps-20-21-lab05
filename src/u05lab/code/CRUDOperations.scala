@@ -1,6 +1,6 @@
 package u05lab.code
 
-import u05lab.code.CRUDFunctions.CRUD
+import lab05.CRUDFunctions.CRUD
 
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 

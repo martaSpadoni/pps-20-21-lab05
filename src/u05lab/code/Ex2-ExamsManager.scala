@@ -11,7 +11,9 @@ object Kind {
   case class FAILED() extends Kind{
     override def toString: String = "FAILED"
   }
-  case class SUCCEEDED() extends Kind
+  case class SUCCEEDED() extends Kind{
+    override def toString: String = "SUCCEEDED"
+  }
 }
 
 trait ExamResult{
