@@ -23,7 +23,6 @@ object PerformanceUtils {
 }
 
 object CRUDFunctions {
-  case class CRUD[+R, +U, +D](colName:String, read: () => R, update: () => U, delete: () => D)
 
   case class Operation[+O]( name:String, op: () => O)
 
@@ -100,7 +99,7 @@ object CollectionsTest extends App {
   compareOn("getting a value by key", Operation("Map", () => map(10)),
     Operation("Mutable Map", () => mutableMap(10)))
 
-  compareOn("insert a new entry", Operation("Map", () => map = map + (50 -> "e")),
+  compareOn("inserting a new entry", Operation("Map", () => map = map + (50 -> "e")),
     Operation("Mutable Map", () => mutableMap += (50 -> "e")))
 
   compareOn("removing the entry with key 20", Operation("Map", () => map = map.filterKeys(k => k != 20) ),
