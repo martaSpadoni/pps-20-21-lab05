@@ -13,20 +13,20 @@ class SomeTest {
   }
 
   @Test
-  def testPartition: Unit ={
+  def testPartition(): Unit ={
     val l = List(10, 11, 12, 13, 14)
     assertEquals((List(10, 12, 14), List(11,13)), l.partition(i => i % 2 == 0))
   }
 
   @Test
-  def testSpan: Unit ={
+  def testSpan(): Unit ={
     val l = List(10, 20, 30 , 40, 50)
     assertEquals((List(10, 20, 30), List(40, 50)), l.span(e => e <= 30))
   }
 
   @Test
-  def testReduceOnEmptyList: Unit ={
-    assertThrows(classOf[UnsupportedOperationException], () => List.nil.reduce((a:Int, b:Int) => a))
+  def testReduceOnEmptyList(): Unit ={
+    assertThrows(classOf[UnsupportedOperationException], () => List.nil.reduce((a:Int, _:Int) => a))
   }
 
   @Test
@@ -56,8 +56,4 @@ class SomeTest {
     assertEquals(List("2 is even","4 is even","6 is even"), l.collect(isEven))
   }
 
-  @Test
-  def testIncremental() {
-    assert(true)
-  }
 }
