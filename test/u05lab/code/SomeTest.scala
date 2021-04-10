@@ -44,7 +44,7 @@ class SomeTest {
   @Test
   def testTakeRight(): Unit ={
     val l = List("a", "b", "c", "d", "e")
-    assertEquals(List("c", "d", "e"), l.takeRight(3))
+    assertEquals(List("d", "e"), l.takeRight(2))
   }
 
   @Test

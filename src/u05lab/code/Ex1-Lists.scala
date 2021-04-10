@@ -128,7 +128,7 @@ trait ListImplementation[A] extends List[A] {
   }
 
   override def partition(pred: A => Boolean): (List[A],List[A]) = {
-    (this.filter(pred), this.filter(e => !pred(e)))
+    (filter(pred), filter(!pred(_)))
   }
 
   override def span(pred: A => Boolean): (List[A],List[A]) = {
@@ -151,11 +151,13 @@ trait ListImplementation[A] extends List[A] {
   override def takeRight(n: Int): List[A] = {
 //    val len = this.foldLeft(0)((acc, _) => acc+1)
 //    this.zipRight.partition({ case (e, i) => i >= len-n})._1.map({case (e, i) => e})
-    this.reverse.zipRight.span({ case (_, i) => i < n})._1.map({case (e,_) => e}).reverse
+    //this.reverse.zipRight.span({ case (_, i) => i < n})._1.map({case (e,_) => e}).reverse
+    var k = n;
+    foldRight(List.nil[A])((elem, list) => if (k > 0) {k = k-1; elem::list} else list )
   }
 
   override def collect[B](partialFunction: PartialFunction[A, B]): List[B] ={
-    this.filter(e => partialFunction.isDefinedAt(e)).map(partialFunction)
+    this.filter(partialFunction.isDefinedAt(_)).map(partialFunction)
   }
 
 }
